@@ -22,3 +22,5 @@ data/*.csv
 *.synctex.gz
 *.out
 .claude/
+lean/.lake/
+lean/lake-packages/
