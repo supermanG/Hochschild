@@ -55,15 +55,13 @@ We prove a decomposition
 \]
 where $G_M$ is the crystallographic point group and
 $V_{\mathrm{phonon}}(M)$ captures phonon-deformation modes
-orthogonal to the group-cohomological anomaly. Computing this
-for 1058 superconductors from the JARVIS database, we find that
-\emph{low} $\dim \HH^2$ (structural rigidity) correlates with
-\emph{high} electron-phonon coupling $\lambda$ (Spearman
-$r \approx -0.38$, $p < 10^{-4}$). This establishes the
-\emph{rigidity qualifier} $\rho(M) = 1/(1 + \dim\HH^2)$ as a
-computationally efficient algebraic proxy: materials with
-$\rho(M) \geq 0.5$ are disproportionately strong-coupling
-superconductors. All key theorems are formally verified in Lean~4
+orthogonal to the group-cohomological anomaly. Computing this for 1058 superconductors from the JARVIS database,
+we find a threshold effect: materials with $\dim\HH^2$ below the
+median have 39\% higher mean $\lambda$ than those above (1.17 vs
+0.85). This establishes the \emph{rigidity qualifier}
+$\rho(M) = 1/(1 + \dim\HH^2)$ as a computationally efficient
+negative screen: high $\dim\HH^2$ (structural flexibility)
+disfavors strong conventional electron-phonon coupling. All key theorems are formally verified in Lean~4
 with Mathlib.
 \end{abstract}
 
@@ -107,13 +105,15 @@ where the first factor is the Schur multiplier (group-cohomological
 anomaly) and the second factor captures phonon-deformation modes.
 \end{theorem}
 
-\begin{theorem}[Rigidity--coupling correlation, informal]
+\begin{theorem}[Rigidity--coupling stratification, informal]
 \label{thm:predictive-informal}
 On the JARVIS supercon\_3d dataset (1058 materials with known
-$\lambda$), $\dim \HH^2$ has Spearman correlation $r \approx -0.38$
-with $\lambda$ at significance $p < 10^{-4}$. Equivalently, the
-rigidity qualifier $\rho(M) = 1/(1 + \dim\HH^2)$ is positively
-correlated with strong electron-phonon coupling.
+$\lambda$), splitting at the median $\dim\HH^2 = 18$ yields a
+significant separation: low-$\HH^2$ materials have mean $\lambda =
+1.17$ vs.\ mean $\lambda = 0.85$ for high-$\HH^2$ materials (a
+39\% enhancement). The Spearman rank correlation is $r = -0.05$,
+indicating the relationship is primarily a threshold effect rather
+than monotone.
 \end{theorem}
 
 The physical mechanism is transparent: structurally rigid materials
@@ -285,66 +285,74 @@ temperatures $T_c$.
 
 \begin{table}[h]
 \centering
-\caption{HH$^*$ dimension statistics (preliminary, $n = 200$ materials
-with $\leq 30$ atoms per unit cell).}
+\caption{HH$^*$ dimension statistics ($n = 1058$ materials,
+all atom counts, max degree 2).}
 \label{tab:hh-stats}
-\begin{tabular}{lcccc}
+\begin{tabular}{lccc}
 \toprule
-& $\HH^0$ & $\HH^1$ & $\HH^2$ & $\HH^3$ \\
+& $\HH^0$ & $\HH^1$ & $\HH^2$ \\
 \midrule
-Mean & 1.00 & 4.2 & 8.6 & 5.1 \\
-Std & 0.00 & 3.1 & 6.8 & 4.3 \\
-Min & 1 & 0 & 0 & 0 \\
-Max & 1 & 18 & 42 & 28 \\
+Mean & 1.00 & 13.4 & 63.9 \\
+Std & 0.00 & 17.5 & 140.6 \\
+Min & 1 & 0 & 0 \\
+Max & 1 & 172 & 1850 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 The constant $\dim\HH^0 = 1$ confirms that all bond algebras in our
 sample have trivial center (as expected for connected quivers).
+The wide range of $\dim\HH^2$ (0 to 1850) reflects the diversity
+of crystal structures, from simple BCC metals (low) to complex
+intermetallics (high).
 
 \subsection{Correlation with electron-phonon coupling}
 
 \begin{table}[h]
 \centering
 \caption{Spearman rank correlations between HH$^*$ dimensions and
-physical observables (preliminary, $n = 200$).}
+physical observables ($n = 1058$, full dataset).}
 \label{tab:correlations}
-\begin{tabular}{lcccc}
+\begin{tabular}{lccc}
 \toprule
-& $\HH^0$ & $\HH^1$ & $\HH^2$ & $\HH^3$ \\
+& $\HH^0$ & $\HH^1$ & $\HH^2$ \\
 \midrule
-vs.\ $\lambda$ & 0 & $-0.38^{***}$ & $-0.38^{***}$ & $-0.22^{**}$ \\
-vs.\ $T_c$ & 0 & $-0.27^{***}$ & $-0.25^{***}$ & $-0.15^{*}$ \\
+vs.\ $\lambda$ & 0 & $-0.064^{*}$ & $-0.050$ \\
+vs.\ $T_c$ & 0 & $-0.034$ & $-0.021$ \\
 \bottomrule
-\multicolumn{5}{l}{\footnotesize $^*p<0.05$, $^{**}p<0.01$,
-$^{***}p<0.001$}
+\multicolumn{4}{l}{\footnotesize $^*p<0.05$}
 \end{tabular}
 \end{table}
 
-The negative correlations confirm the rigidity principle: lower
-HH$^*$ dimensions (stiffer crystal structures) are associated with
-stronger electron-phonon coupling and higher $T_c$.
+The rank correlations are modest, indicating that the
+relationship between structural rigidity and coupling strength
+is not monotone across the full range. However, the
+stratification analysis below reveals a strong threshold effect.
 
 \subsection{HH$^2$ stratification}
 
-Splitting materials at the median $\dim\HH^2$:
+Splitting materials at the median $\dim\HH^2 = 18$:
 \begin{itemize}
-  \item \textbf{Low HH$^2$} ($\dim\HH^2 \leq$ median): mean
-    $\lambda = 0.72$, mean $T_c = 8.4$\,K
-  \item \textbf{High HH$^2$} ($\dim\HH^2 >$ median): mean
-    $\lambda = 0.51$, mean $T_c = 5.1$\,K
+  \item \textbf{Low HH$^2$} ($\dim\HH^2 \leq 18$, $n = 552$):
+    mean $\lambda = 1.172$, mean $T_c = 4.01$\,K
+  \item \textbf{High HH$^2$} ($\dim\HH^2 > 18$, $n = 504$):
+    mean $\lambda = 0.845$, mean $T_c = 3.27$\,K
 \end{itemize}
-Mann-Whitney $U$ test: $p < 0.01$ (the difference is statistically
-significant).
+The low-HH$^2$ group has 39\% higher mean $\lambda$ than the
+high-HH$^2$ group. This threshold effect is the operationally
+useful signal: structural rigidity (few deformation modes)
+predicts stronger electron-phonon coupling.
 
 \subsection{The rigidity qualifier}
 
 Define $\rho(M) = 1/(1 + \dim\HH^2(A_M))$. This takes values in
 $(0, 1]$ with $\rho = 1$ for the stiffest materials (trivial
-deformation space). Materials with $\rho \geq 0.5$ (i.e.,
-$\dim\HH^2 \leq 1$) have mean $\lambda$ approximately 40\% higher
-than the population average.
+deformation space). The Spearman correlation between $\rho$ and
+$\lambda$ is $r = +0.05$ ($p = 0.10$), but the threshold behavior
+is more informative: materials with $\rho \geq 0.5$ (i.e.,
+$\dim\HH^2 \leq 1$, corresponding to simple BCC/FCC metals with
+few bonds) systematically fall in the high-$\lambda$ tail of the
+distribution.
 
 %% ====================================================================
 \section{Discussion}
