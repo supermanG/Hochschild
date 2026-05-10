@@ -29,7 +29,7 @@ def hasTriangle (Q : BondQuiver) (i j k : Fin Q.n_atoms) : Prop :=
 theorem triangle_sym (Q : BondQuiver) (i j k : Fin Q.n_atoms)
     (h : hasTriangle Q i j k) : hasTriangle Q i k j := by
   obtain ⟨hij, hjk, hik⟩ := h
-  exact ⟨hik, Q.bonds_symm k j (Q.bonds_symm j k hjk), hij⟩
+  exact ⟨hik, Q.bonds_symm j k hjk, hij⟩
 
 /-- The number of directed arrows equals twice the undirected bonds
     (since each bond gives two oriented arrows). -/
@@ -38,10 +38,14 @@ theorem n_directed_eq_twice (n_bonds n_arrows : Nat)
     n_arrows = n_bonds + n_bonds := by
   omega
 
-/-- For a bond quiver with all possible triangles (complete graph),
-    the quotient algebra is commutative. -/
-theorem complete_quiver_commutative (n : Nat) (hn : n ≥ 3) :
-    n * (n - 1) * (n - 2) / 6 ≥ 1 := by
-  omega
+/-- For a bond quiver with all possible triangles (complete graph on n >= 3),
+    there are at least 6 ordered triples, hence at least one triangle. -/
+theorem complete_quiver_has_triangle (n : Nat) (hn : n ≥ 3) :
+    n * (n - 1) * (n - 2) ≥ 6 := by
+  have h2 : n - 1 ≥ 2 := by omega
+  have h3 : n - 2 ≥ 1 := by omega
+  calc n * (n - 1) * (n - 2)
+      ≥ 3 * 2 * 1 := Nat.mul_le_mul (Nat.mul_le_mul hn h2) h3
+    _ = 6 := rfl
 
 end BondAlgebra

@@ -26,7 +26,7 @@ theorem euler_char_hereditary
     (h_hh0 : hh0 = n_vertices)
     (h_hh1 : hh1 = n_arrows) :
     (hh0 : Int) - (hh1 : Int) = (n_vertices : Int) - (n_arrows : Int) := by
-  subst h_hh0; subst h_hh1
+  subst h_hh0; subst h_hh1; rfl
 
 /-- For the bar resolution of a path algebra kQ/I with monomial
     relations, the differential d^n has rank bounded by the number
@@ -41,7 +41,7 @@ theorem differential_rank_bound
     This is non-negative by construction. -/
 theorem hh_dim_nonneg
     (dim_ker dim_im : Nat)
-    (h : dim_im ≤ dim_ker) :
+    (_h : dim_im ≤ dim_ker) :
     0 ≤ dim_ker - dim_im := by
   omega
 

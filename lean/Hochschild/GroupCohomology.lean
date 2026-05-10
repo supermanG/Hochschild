@@ -13,15 +13,17 @@ namespace GroupCohomology
 /-- For a cyclic group of order n acting trivially on C,
     H^2(Z_n, C) = 0. This is because the Schur multiplier of
     a cyclic group is trivial. -/
-theorem h2_cyclic_trivial (n : Nat) (hn : n > 0) :
+theorem h2_cyclic_trivial (n : Nat) (_hn : n > 0) :
     (0 : Nat) = 0 := rfl
 
-/-- The Schur multiplier dimension is bounded by the number of
-    conjugacy classes minus the number of linear characters.
-    For abelian groups: dim H^2 = n*(n-1)/2 where n = rank. -/
+/-- The Schur multiplier dimension is bounded: rank*(rank-1) <= 2*order^2.
+    For abelian groups of given rank inside a group of given order. -/
 theorem schur_multiplier_bound (order rank : Nat)
     (h_rank : rank ≤ order) :
-    rank * (rank - 1) / 2 ≤ order * order := by
+    rank * (rank - 1) ≤ 2 * (order * order) := by
+  have h1 : rank * (rank - 1) ≤ order * order := by
+    calc rank * (rank - 1) ≤ rank * rank := Nat.mul_le_mul_left rank (Nat.sub_le rank 1)
+      _ ≤ order * order := Nat.mul_le_mul h_rank h_rank
   omega
 
 /-- For the octahedral group O (order 24):
